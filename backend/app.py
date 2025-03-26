@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 import os
 import requests
@@ -13,6 +14,7 @@ AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT")
 
 
 app = Flask(__name__)
+CORS(app)
 
 def get_spotify_token():
     client_id = os.getenv("SPOTIFY_CLIENT_ID")
@@ -138,12 +140,6 @@ def get_playlist():
         "playlist_url": best_playlist["external_urls"]["spotify"],
         "image": best_playlist["images"][0]["url"]
     })
-
-
-
-
-    
-
 
 if __name__ == '__main__':
     app.run(debug=True)
