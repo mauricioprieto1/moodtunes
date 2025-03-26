@@ -88,7 +88,7 @@ def analyze_text():
 
 @app.route('/get-playlist', methods=['GET'])
 def get_playlist():
-    mood = request.args.get('mood', 'happy')  # default mood
+    mood = request.args.get('mood', 'happy')
 
     token = get_spotify_token()
 
@@ -105,17 +105,23 @@ def get_playlist():
     response = requests.get(url, headers=headers, params=params)
     data = response.json()
 
-    playlists = data.get("playlists", {}).get("items", [])
+    print("Spotify API response:")
+    print(data)
 
-    if not playlists:
-        return jsonify({"error": "No playlists found"}), 404
+    all_playlists = data.get("playlists", {}).get("items", [])
+    valid_playlists = [p for p in all_playlists if p is not None]
 
-    playlist = playlists[0]
+    if not valid_playlists:
+        return jsonify({"error": "No valid playlist returned"}), 500
+
+    playlist = valid_playlists[0]
+
     return jsonify({
         "playlist_name": playlist["name"],
         "playlist_url": playlist["external_urls"]["spotify"],
         "image": playlist["images"][0]["url"]
     })
+
 
     
 
