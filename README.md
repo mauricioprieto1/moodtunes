@@ -1,70 +1,80 @@
-# Getting Started with Create React App
+🎶 MoodTunes AI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+MoodTunes AI is a full-stack web application that detects the mood of a user's input text using AI and generates a Spotify playlist that matches the mood.
 
-## Available Scripts
+✨ Features
 
-In the project directory, you can run:
+🌈 Analyzes user input for emotional sentiment using Azure Text Analytics
 
-### `npm start`
+🔍 Maps mood to a Spotify playlist using the Spotify API
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+🎷 Returns the most followed relevant playlist for an optimal experience
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+⚛️ React frontend + Flask backend
 
-### `npm test`
+🔐 Secure token-based API access
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+🚀 Technologies Used
 
-### `npm run build`
+Frontend: React
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Backend: Flask (Python)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+AI Sentiment Analysis: Azure Cognitive Services
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Music Recommendation: Spotify Web API
 
-### `npm run eject`
+🧐 How It Works
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+User enters a text (e.g., “I'm feeling nostalgic”).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Backend analyzes sentiment via Azure Text Analytics.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Sentiment is mapped to a mood: happy, relaxed, or sad.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+A Spotify playlist matching the mood is fetched.
 
-## Learn More
+The best playlist (based on follower count) is displayed in the frontend.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+🔧 Setup Instructions
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Backend
 
-### Code Splitting
+cd backend
+python -m venv venv
+venv\Scripts\activate   # or source venv/bin/activate on Mac/Linux
+pip install -r requirements.txt
+python app.py
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Create a .env file in the backend/ folder with:
 
-### Analyzing the Bundle Size
+AZURE_KEY=your_azure_key
+AZURE_ENDPOINT=your_azure_endpoint
+SPOTIFY_CLIENT_ID=your_spotify_client_id
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Frontend
 
-### Making a Progressive Web App
+cd frontend
+npm install
+npm start
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+🛡️ Security
 
-### Advanced Configuration
+Secrets are stored securely in environment variables.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Backend uses the Client Credentials Flow to fetch a valid Spotify token.
 
-### Deployment
+📚 Future Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+🎭 More detailed mood classification (e.g., nostalgic, confident)
 
-### `npm run build` fails to minify
+🗨️ Voice input support
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+🔄 Shuffle or refresh playlist
+
+📱 Responsive mobile design
+
+📜 License
+
+This project is for educational/demo purposes and is not intended for production use.
