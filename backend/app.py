@@ -114,13 +114,32 @@ def get_playlist():
     if not valid_playlists:
         return jsonify({"error": "No valid playlist returned"}), 500
 
-    playlist = valid_playlists[0]
+    # New logic to find playlist with most followers
+    best_playlist = None
+    max_followers = -1
+
+    for playlist in valid_playlists:
+        playlist_id = playlist["id"]
+        details_url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
+        detail_res = requests.get(details_url, headers=headers)
+        if detail_res.status_code != 200:
+            continue
+        detail_data = detail_res.json()
+        followers = detail_data.get("followers", {}).get("total", 0)
+        if followers > max_followers:
+            max_followers = followers
+            best_playlist = detail_data
+
+    if not best_playlist:
+        return jsonify({"error": "No playlist with follower data found"}), 500
 
     return jsonify({
-        "playlist_name": playlist["name"],
-        "playlist_url": playlist["external_urls"]["spotify"],
-        "image": playlist["images"][0]["url"]
+        "playlist_name": best_playlist["name"],
+        "playlist_url": best_playlist["external_urls"]["spotify"],
+        "image": best_playlist["images"][0]["url"]
     })
+
+
 
 
     
