@@ -6,6 +6,7 @@ function App() {
   const [imageUrl, setImageUrl] = useState('');
   const [mood, setMood] = useState('');
   const [tag, setTag] = useState('');
+  const [tags, setTags] = useState([]); // NEW
   const [playlist, setPlaylist] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -13,6 +14,7 @@ function App() {
     setLoading(true);
     setMood('');
     setPlaylist(null);
+    setTags([]);
 
     try {
       const sentimentRes = await fetch('http://localhost:5000/analyze-text', {
@@ -39,6 +41,7 @@ function App() {
   const handleImagePlaylist = async () => {
     setLoading(true);
     setTag('');
+    setTags([]);
     setPlaylist(null);
 
     try {
@@ -49,10 +52,19 @@ function App() {
       });
 
       const data = await res.json();
+
+      if (data.tags && data.tags.length === 0) {
+        alert("We couldn't detect any recognizable elements in the image. Try using a clearer or more detailed image!");
+      }
+
+
+
+
       if (data.error) {
         alert(data.error);
       } else {
         setTag(data.tag_detected);
+        setTags(data.tags || []); // NEW
         setPlaylist(data);
       }
     } catch (err) {
@@ -99,7 +111,14 @@ function App() {
 
       {/* OUTPUTS */}
       {mood && <p><strong>Mood detected:</strong> {mood}</p>}
-      {tag && <p><strong>Tag detected from image:</strong> {tag}</p>}
+
+      {(tag || tags.length > 0) && (
+        <div>
+          <h3>🖼️ Image Analysis:</h3>
+          {tag && <p><strong>Tag matched to theme:</strong> {tag}</p>}
+          {tags.length > 0 && <p><strong>Tags detected:</strong> {tags.join(', ')}</p>}
+        </div>
+      )}
 
       {playlist && (
         <div>
