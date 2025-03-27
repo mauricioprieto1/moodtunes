@@ -141,5 +141,85 @@ def get_playlist():
         "image": best_playlist["images"][0]["url"]
     })
 
+
+@app.route('/image-to-playlist', methods=['POST'])
+def image_to_playlist():
+    image_url = request.json.get('image_url')
+
+    if not image_url:
+        return jsonify({"error": "No image URL provided"}), 400
+
+    vision_endpoint = os.getenv("AZURE_VISION_ENDPOINT") + "vision/v3.2/analyze"
+    vision_key = os.getenv("AZURE_VISION_KEY")
+
+    headers = {
+        "Ocp-Apim-Subscription-Key": vision_key,
+        "Content-Type": "application/json"
+    }
+
+    params = {
+        "visualFeatures": "Tags"
+    }
+
+    body = {
+        "url": image_url
+    }
+
+    try:
+        response = requests.post(vision_endpoint, headers=headers, params=params, json=body)
+        result = response.json()
+
+        tags = [tag["name"] for tag in result.get("tags", [])]
+
+        print("Image Tags:", tags)
+
+        # Simple keyword mapping (you can expand this later)
+        tag_to_theme = {
+            "car": "roadtrip",
+            "beach": "summer",
+            "sunset": "chill",
+            "guitar": "acoustic",
+            "party": "party",
+            "dog": "feel good",
+            "city": "urban", #################################
+        }
+
+        keyword = "vibes"
+        for tag in tags:
+            if tag in tag_to_theme:
+                keyword = tag_to_theme[tag]
+                break
+
+        # Now fetch playlist from Spotify like before
+        token = get_spotify_token()
+        url = "https://api.spotify.com/v1/search"
+        headers = {
+            "Authorization": f"Bearer {token}"
+        }
+        params = {
+            "q": keyword,
+            "type": "playlist",
+            "limit": 5
+        }
+
+        res = requests.get(url, headers=headers, params=params)
+        playlists = res.json().get("playlists", {}).get("items", [])
+        playlists = [p for p in playlists if p is not None]
+
+        if not playlists:
+            return jsonify({"error": "No playlists found"}), 404
+
+        best = playlists[0]
+        return jsonify({
+            "tag_detected": keyword,
+            "playlist_name": best["name"],
+            "playlist_url": best["external_urls"]["spotify"],
+            "image": best["images"][0]["url"]
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True)
