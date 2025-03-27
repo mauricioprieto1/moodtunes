@@ -6,6 +6,9 @@ import os
 import requests
 import base64
 
+#import the tags
+from tag_mapping import TAG_TO_THEME, DEFAULT_THEME
+
 
 load_dotenv()
 
@@ -173,22 +176,16 @@ def image_to_playlist():
 
         print("Image Tags:", tags)
 
-        # Simple keyword mapping (you can expand this later)
-        tag_to_theme = {
-            "car": "roadtrip",
-            "beach": "summer",
-            "sunset": "chill",
-            "guitar": "acoustic",
-            "party": "party",
-            "dog": "feel good",
-            "city": "urban", #################################
-        }
+        
 
-        keyword = "vibes"
-        for tag in tags:
-            if tag in tag_to_theme:
-                keyword = tag_to_theme[tag]
-                break
+        # Prioritize tags that match your mapping
+        mapped_keywords = [TAG_TO_THEME[tag] for tag in tags if tag in TAG_TO_THEME]
+
+
+        # Use the first mapped keyword, or fallback to 'vibes'
+        keyword = mapped_keywords[0] if mapped_keywords else DEFAULT_THEME
+
+
 
         # Now fetch playlist from Spotify like before
         token = get_spotify_token()
@@ -212,6 +209,7 @@ def image_to_playlist():
         best = playlists[0]
         return jsonify({
             "tag_detected": keyword,
+            "tags": tags,
             "playlist_name": best["name"],
             "playlist_url": best["external_urls"]["spotify"],
             "image": best["images"][0]["url"]
